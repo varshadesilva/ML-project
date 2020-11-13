@@ -93,6 +93,6 @@ model = m.make(preproc_english_sentences.shape,
                len(english_tokenizer.word_index) + 1,
                len(french_tokenizer.word_index) + 1)
 model.summary()
-model.fit(preproc_english_sentences, preproc_french_sentences, batch_size=1024, epochs=10, validation_split=0.2)
+model.fit(preproc_english_sentences, preproc_french_sentences, batch_size=1024, epochs=100, validation_split=0.2)
 model.save('Model Parameters/mymodel')
 
