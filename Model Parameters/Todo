@@ -1,0 +1,25 @@
+Tasks:
+- Meghana and Varsha
+    - use the same code as in Master.py
+    - Split the methods in Master.py into different classes like train.py, test.py, activationFunctions,py, etc..
+    - Refactor the code => change variable names, function names, etc...
+    - DO NOT write the preprocessing method.... it is different for our data
+    - in train.py give a method call to kerasModel.py
+    - in test.py call call to kerasModel.py
+    - save the npy files with different names
+
+- Rohan:
+    - calculating the metrics like accuracy and other model eval params
+    - generate plots, graphs for results, etc
+    - compare our output with google translate output
+
+- Reetish
+    - google translate API implemetation
+    - implement the kerasModel.py
+    - implement preprocessing.py
+
+MAIN.py
+- To be discussed
+
+Documentation
+- will start from Nov 23

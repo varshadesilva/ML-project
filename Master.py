@@ -151,7 +151,7 @@ class RecurrentNeuralNet:
 
         self.max_len = max_len
 
-        # weights and bias
+        # Model Parameters and bias
         self.Wa = np.random.rand(max_len, 1)
         self.Wi = np.random.rand(max_len, 1)
         # self.EWf = np.random.rand(eng_unique_words_count)
@@ -167,7 +167,7 @@ class RecurrentNeuralNet:
         self.DV = np.random.rand(max_len, 1)
         print("**** Initialized network parameters ****")
 
-        # weights and bias
+        # Model Parameters and bias
 
     def activation_sigmoid(self, x):
         """
@@ -378,7 +378,7 @@ class RecurrentNeuralNet:
     def backward_pass_exp(self, a, i, oo, cell_internal_state, hidden_state, currentX, currentY, expectedY,
                           learning_rate=0.01):
         # update softmax weight
-        # calculate delta for softmax weights
+        # calculate delta for softmax Model Parameters
         # print("---------- running backward pass ---------")
         softMax_error_intermediate = currentY - expectedY
         softmax_delta = self.calculate_delta_for_softmax_weight(hidden_state, expectedY, currentY)
@@ -420,7 +420,7 @@ class RecurrentNeuralNet:
         dEdWreco = np.sum(softMax_error_intermediate * dhdWreco)
         # print("delta Wreco:",dEdWreco)
         # print("---------- calculated delta values  ---------")
-        # print("---------- updating weights  ---------")
+        # print("---------- updating Model Parameters  ---------")
         # print("Wa",self.Wa)
         # print("deltaW", dEdWa)
         self.Wa = self.Wa - (learning_rate * dEdWa).reshape(self.max_len, 1)
@@ -430,7 +430,7 @@ class RecurrentNeuralNet:
         self.Wo = self.Wo - (learning_rate * dEdWoo).reshape(self.max_len, 1)
         self.Wreco = self.Wreco - (learning_rate * dEdWreco)
         self.DV = self.DV - (learning_rate * softmax_delta).reshape(self.max_len, 1)
-        # print("---------- weights updated successfully  ---------")
+        # print("---------- Model Parameters updated successfully  ---------")
 
 
     def calculate_delta_for_softmax_weight(self, h, t, y):
@@ -449,11 +449,11 @@ class RecurrentNeuralNet:
     def trainNetwork(self, X, Y, epoch, X_test, y_test):
         """
         Method to train the network
-        :param X: Input training data set
+        :param X: Input training Data set
         :param Y: Input training expected outputs
         :param epoch: number of epochs
-        :param X_test: Test data
-        :param y_test: Expected outputs for test data
+        :param X_test: Test Data
+        :param y_test: Expected outputs for test Data
         :return: array of values of train error and test error for every epoch
         """
         trainerrorarray = []
@@ -562,8 +562,8 @@ class RecurrentNeuralNet:
         print(sent)
 
 if __name__ == "__main__":
-    dataset_file_name = 'data/hin_combined.csv'
-    #   Load data from csv file
+    dataset_file_name = 'Data/hin_combined.csv'
+    #   Load Data from csv file
     df = pd.read_csv(filepath_or_buffer=dataset_file_name, sep='\t', header=None)
     df.columns = ["ENG", "HINDI"]
     dp_ins = DataPreprocessor()
@@ -573,16 +573,16 @@ if __name__ == "__main__":
     rnn = RecurrentNeuralNet(max_eng_len, max_hindi_len, eng_unique_words_count, hin_unique_words_count,
                              dp_ins.input_words, dp_ins.input_onehot_encoded, dp_ins.output_words,
                              dp_ins.output_onehot_encoded)
-    rnn.Wa = np.load("weights/Wa.npy").reshape(hin_unique_words_count, 1)
-    rnn.Wreca = np.load("weights/Wreca.npy")
-    rnn.Wo = np.load("weights/Wo.npy").reshape(hin_unique_words_count, 1)
-    rnn.Wreco = np.load("weights/Wreco.npy")
-    rnn.Wi = np.load("weights/Wi.npy").reshape(hin_unique_words_count, 1)
-    rnn.Wreci = np.load("weights/Wreci.npy")
-    rnn.DV = np.load("weights/DV.npy").reshape(hin_unique_words_count, 1)
-    rnn.ba = np.load("weights/ba.npy")
-    rnn.bi = np.load("weights/bi.npy")
-    rnn.bo = np.load("weights/bo.npy")
+    rnn.Wa = np.load("Model Parameters/Wa.npy").reshape(hin_unique_words_count, 1)
+    rnn.Wreca = np.load("Model Parameters/Wreca.npy")
+    rnn.Wo = np.load("Model Parameters/Wo.npy").reshape(hin_unique_words_count, 1)
+    rnn.Wreco = np.load("Model Parameters/Wreco.npy")
+    rnn.Wi = np.load("Model Parameters/Wi.npy").reshape(hin_unique_words_count, 1)
+    rnn.Wreci = np.load("Model Parameters/Wreci.npy")
+    rnn.DV = np.load("Model Parameters/DV.npy").reshape(hin_unique_words_count, 1)
+    rnn.ba = np.load("Model Parameters/ba.npy")
+    rnn.bi = np.load("Model Parameters/bi.npy")
+    rnn.bo = np.load("Model Parameters/bo.npy")
 
     do_train = False
     if len(sys.argv) == 2:
