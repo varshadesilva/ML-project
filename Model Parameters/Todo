@@ -8,6 +8,7 @@ Tasks:
     - in test.py call call to kerasModel.py
     - save the npy files with different names
 
+
 - Rohan:
     - calculating the metrics like accuracy and other model eval params
     - generate plots, graphs for results, etc
@@ -17,6 +18,9 @@ Tasks:
     - google translate API implemetation
     - implement the kerasModel.py
     - implement preprocessing.py
+
+Remove TODO file
+Remove master.py
 
 MAIN.py
 - To be discussed
