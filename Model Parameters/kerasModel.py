@@ -12,11 +12,11 @@ from keras.losses import sparse_categorical_crossentropy
 from keras.utils import to_categorical
 
 class Something:
-    def whereToFindPath(self, path):
-        file = os.path.join(path)
-        with open(file, "r") as f:
-            data = f.read()
-        return data.split('\n')
+    def whereToFindPath(self, pathToFile):
+        filePath = os.path.join(pathToFile)
+        with open(filePath, "r") as f:
+            fileData = f.read()
+        return fileData.split('\n')
 
     def changeFromSomethingToSomethingElse(self, x):
         tokenizer = Tokenizer()
@@ -24,55 +24,55 @@ class Something:
         return tokenizer.texts_to_sequences(x), tokenizer
 
 
-    def convertLanguages(self, sentence):
-        y_id_to_word = {value: key for key, value in french_tokenizer.word_index.items()}
-        y_id_to_word[0] = '<PAD>'
-        sentence = [english_tokenizer.word_index[word] for word in sentence.split()]
-        sentence = pad_sequences([sentence], maxlen=preproc_english_sentences.shape[-1], padding='post')
-        sentences = np.array([sentence[0], preproc_english_sentences[0]])
+    def convertLanguages(self, line):
+        YList = {v: k for k, v in freTokens.word_index.items()}
+        YList[0] = '<PAD>'
+        line = [engTokens.word_index[each] for each in line.split()]
+        line = pad_sequences([line], maxlen=preProcEng.shape[-1], padding='post')
+        allSentencesList = np.array([line[0], preProcEng[0]])
         model = keras.models.load_model('Model Parameters/mymodel')
-        predictions = model.predict(sentences, len(sentences))
-        return ' '.join([y_id_to_word[np.argmax(x)] for x in predictions[0]])
+        preds = model.predict(allSentencesList, len(allSentencesList))
+        return ' '.join([YList[np.argmax(x)] for x in preds[0]])
 
 
-    def fillIn(self, x, length=None):
-        return pad_sequences(x, maxlen=length, padding='post')
+    def fillIn(self, data, size=None):
+        return pad_sequences(data, maxlen=size, padding='post')
 
 
-    def makeDataReadable(self, x, y):
-        preprocess_x, x_tk = self.changeFromSomethingToSomethingElse(x)
-        preprocess_y, y_tk = self.changeFromSomethingToSomethingElse(y)
-        preprocess_x = self.fillIn(preprocess_x)
-        preprocess_y = self.fillIn(preprocess_y)
-        preprocess_y = preprocess_y.reshape(*preprocess_y.shape, 1)
-        return preprocess_x, preprocess_y, x_tk, y_tk
+    def makeDataReadable(self, A, B):
+        Xtemp, xTokens = self.changeFromSomethingToSomethingElse(A)
+        Ytemp, yTokens = self.changeFromSomethingToSomethingElse(B)
+        Xtemp = self.fillIn(Xtemp)
+        Ytemp = self.fillIn(Ytemp)
+        Ytemp = Ytemp.reshape(*Ytemp.shape, 1)
+        return Xtemp, Ytemp, xTokens, yTokens
 
-    def getWhatisRequired(self, idList, tokenizer):
-        index_to_words = {id: word for word, id in tokenizer.word_index.items()}
-        index_to_words[0] = '<PAD>'
+    def getWhatisRequired(self, listOfId, taglizer):
+        wordsList = {id: word for word, id in taglizer.word_index.items()}
+        wordsList[0] = '<PAD>'
 
-        return ' '.join([index_to_words[prediction] for prediction in np.argmax(idList, 1)])
+        return ' '.join([wordsList[preds] for preds in np.argmax(listOfId, 1)])
 
-    def howRUDoing(self, model_final):
-        input_shape = (137861, 15)
-        output_sequence_length = 21
-        english_vocab_size = 199
-        french_vocab_size = 344
-        model = model_final(input_shape, output_sequence_length, english_vocab_size, french_vocab_size)
+    def howRUDoing(self, model):
+        shape = (137861, 15)
+        opLength = 21
+        vocabSizeEng = 199
+        vocabSizeFre = 344
+        model = model(shape, opLength, vocabSizeEng, vocabSizeFre)
 
-    def make(self, input_shape, output_sequence_length, english_vocab_size, french_vocab_size):
-        learning_rate = 0.003
+    def make(self, ipShape, opSeqLEn, vocabSizeEng, vocanSizeFre):
+        lr = 0.003
         model = Sequential()
-        model.add(Embedding(english_vocab_size, 128, input_length=input_shape[1],
-                            input_shape=input_shape[1:]))
+        model.add(Embedding(vocabSizeEng, 128, input_length=ipShape[1],
+                            input_shape=ipShape[1:]))
         model.add(Bidirectional(GRU(128)))
-        model.add(RepeatVector(output_sequence_length))
+        model.add(RepeatVector(opSeqLEn))
         model.add(Bidirectional(GRU(128, return_sequences=True)))
         model.add(TimeDistributed(Dense(512, activation='relu')))
         model.add(Dropout(0.5))
-        model.add(TimeDistributed(Dense(french_vocab_size, activation='softmax')))
+        model.add(TimeDistributed(Dense(vocanSizeFre, activation='softmax')))
         model.compile(loss=sparse_categorical_crossentropy,
-                      optimizer=Adam(learning_rate),
+                      optimizer=Adam(lr),
                       metrics=['accuracy'])
         return model
 
@@ -82,17 +82,17 @@ trainEnglish = "Data/Train/english"
 trainFrench = "Data/Train/french"
 englishSentences = m.whereToFindPath(trainEnglish)
 frenchSentences = m.whereToFindPath(trainFrench)
-preproc_english_sentences, preproc_french_sentences, english_tokenizer, french_tokenizer = m.makeDataReadable(englishSentences, frenchSentences)
-max_english_sequence_length = preproc_english_sentences.shape[1]
-max_french_sequence_length = preproc_french_sentences.shape[1]
-english_vocab_size = len(english_tokenizer.word_index)
-french_vocab_size = len(french_tokenizer.word_index)
+preProcEng, preProcFre, engTokens, freTokens = m.makeDataReadable(englishSentences, frenchSentences)
+engSeqMaxLen = preProcEng.shape[1]
+freSeqMaxLen = preProcFre.shape[1]
+vocabSizeEng = len(engTokens.word_index)
+vocanSizeFre = len(freTokens.word_index)
 
-model = m.make(preproc_english_sentences.shape,
-               preproc_french_sentences.shape[1],
-               len(english_tokenizer.word_index) + 1,
-               len(french_tokenizer.word_index) + 1)
+model = m.make(preProcEng.shape,
+               preProcFre.shape[1],
+               len(engTokens.word_index) + 1,
+               len(freTokens.word_index) + 1)
 model.summary()
-model.fit(preproc_english_sentences, preproc_french_sentences, batch_size=1024, epochs=100, validation_split=0.2)
+model.fit(preProcEng, preProcFre, batch_size=1024, epochs=100, validation_split=0.2)
 model.save('Model Parameters/mymodel')
 
